@@ -1,0 +1,20 @@
+{
+  "id": "plan_demo_002",
+  "intent": "publish launch post",
+  "requiresApproval": false,
+  "approved": false,
+  "action": {
+    "connector": "linkedin",
+    "operation": "publish_post",
+    "risk": "public_publish",
+    "fields": {
+      "body": "Launching today"
+    }
+  },
+  "evidence": [
+    {
+      "source": "README.md",
+      "note": "Project has launch copy"
+    }
+  ]
+}

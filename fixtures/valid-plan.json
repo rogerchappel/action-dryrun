@@ -1,0 +1,22 @@
+{
+  "id": "plan_demo_001",
+  "intent": "draft a follow-up email",
+  "requiresApproval": false,
+  "approved": false,
+  "action": {
+    "connector": "gmail",
+    "operation": "draft_email",
+    "risk": "draft",
+    "fields": {
+      "to": "buyer@example.com",
+      "subject": "Follow-up",
+      "body": "Thanks for the call."
+    }
+  },
+  "evidence": [
+    {
+      "source": "meeting-notes.md",
+      "note": "User asked for a short follow-up draft"
+    }
+  ]
+}
