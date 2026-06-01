@@ -1,0 +1,22 @@
+{
+  "name": "action-dryrun",
+  "version": "0.1.0",
+  "description": "Local protocol and CLI for reviewable agent action dry-run plans",
+  "type": "module",
+  "bin": {
+    "action-dryrun": "src/cli.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/*.js test/*.test.js",
+    "build": "node scripts/validate.js",
+    "smoke": "bash scripts/smoke.sh"
+  },
+  "keywords": [
+    "agent-skill",
+    "dry-run",
+    "cli",
+    "oss"
+  ],
+  "license": "MIT"
+}
