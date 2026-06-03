@@ -21,3 +21,7 @@ test('cli render prints review summary', () => {
   const out = execFileSync('node', ['src/cli.js','render','fixtures/valid-plan.json'], {encoding:'utf8'});
   assert.match(out, /Dry-run plan/);
 });
+test('cli prints package version', () => {
+  const out = execFileSync('node', ['src/cli.js','--version'], {encoding:'utf8'});
+  assert.equal(out.trim(), '0.1.0');
+});

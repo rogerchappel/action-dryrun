@@ -2,11 +2,17 @@
 import fs from 'fs';
 import { validatePlan, renderMarkdown, auditRecord } from './index.js';
 
+const VERSION = '0.1.0';
+
 function load(file) { return JSON.parse(fs.readFileSync(file, 'utf8')); }
 const [cmd, file, ...rest] = process.argv.slice(2);
 if (!cmd || cmd === '--help') {
-  console.log('Usage: action-dryrun <validate|render|audit> plan.json [--actor name]');
+  console.log('Usage: action-dryrun <validate|render|audit> plan.json [--actor name]\n       action-dryrun --version');
   process.exit(cmd ? 0 : 1);
+}
+if (cmd === '--version' || cmd === '-v' || cmd === 'version') {
+  console.log(VERSION);
+  process.exit(0);
 }
 try {
   const plan = load(file);

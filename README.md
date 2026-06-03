@@ -9,11 +9,18 @@ npm install
 npm run smoke
 ```
 
+After publication, install the CLI with npm:
+
+```bash
+npm install -g action-dryrun
+```
+
 ## CLI
 
 ```bash
 node src/cli.js validate fixtures/valid-plan.json
 node src/cli.js render fixtures/valid-plan.json
+action-dryrun --version
 ```
 
 ## Demo
@@ -25,6 +32,24 @@ Promotion notes and a short video outline live in [docs/promo/demo-brief.md](doc
 ## Safety notes
 
 This project is local-first. It does not execute external actions or write to live accounts. Outputs are review artifacts that another approval-controlled layer may consume.
+
+## Release checks
+
+```bash
+npm test
+npm run check
+npm run smoke
+npm run package:smoke
+npm run release:check
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
 
 ## Limitations
 
