@@ -56,3 +56,14 @@ See [SECURITY.md](SECURITY.md).
 - V1 uses deterministic local parsing.
 - Fixtures are intentionally small.
 - Human review is required before any generated plan or content is used externally.
+
+## Development
+
+Run the same checks locally before opening a PR:
+
+- `npm run check` - node --check src/*.js test/*.test.js
+- `npm run build` - node scripts/validate.js
+- `npm test` - node --test
+- `npm run smoke` - bash scripts/smoke.sh
+- `npm run package:smoke` - npm pack --dry-run
+- `npm run release:check` - npm run check && npm test && npm run smoke && npm run package:smoke
