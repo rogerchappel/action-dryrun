@@ -39,5 +39,6 @@
   "bugs": {
     "url": "https://github.com/rogerchappel/action-dryrun/issues"
   },
-  "homepage": "https://github.com/rogerchappel/action-dryrun#readme"
+  "homepage": "https://github.com/rogerchappel/action-dryrun#readme",
+  "author": "Roger Chappel"
 }
