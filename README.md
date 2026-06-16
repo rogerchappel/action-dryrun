@@ -27,7 +27,16 @@ action-dryrun --version
 
 Use the fixture-backed walkthrough in [docs/tutorials/review-a-dry-run-plan.md](docs/tutorials/review-a-dry-run-plan.md) to validate, render, and reject sample plans without calling external services.
 
+For a one-command local demo, run:
+
+```bash
+bash demo/run-fixture-review.sh
+```
+
+The script writes validation JSON, a Markdown review, and an audit record under `.tmp/demo-fixture-review/`.
+
 Promotion notes and a short video outline live in [docs/promo/demo-brief.md](docs/promo/demo-brief.md).
+Social hooks for promoting the demo live in [docs/promo/social-hooks.md](docs/promo/social-hooks.md).
 
 ## Safety notes
 
