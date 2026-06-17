@@ -28,7 +28,7 @@ test('summarizes plans for router handoff', () => {
 });
 test('cli validate returns nonzero for invalid plans', () => {
   const r = spawnSync('node', ['src/cli.js','validate','fixtures/unsafe-plan.json'], {encoding:'utf8'});
-  assert.equal(r.status, 2); assert.match(r.stdout, /external writes/);
+  assert.equal(r.status, 2); assert.match(r.stdout, /public_publish actions require approval/);
 });
 test('cli render prints review summary', () => {
   const out = execFileSync('node', ['src/cli.js','render','fixtures/valid-plan.json'], {encoding:'utf8'});
