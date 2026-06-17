@@ -20,8 +20,29 @@ npm install -g action-dryrun
 ```bash
 node src/cli.js validate fixtures/valid-plan.json
 node src/cli.js render fixtures/valid-plan.json
+node src/cli.js summary fixtures/valid-plan.json
 action-dryrun --version
 ```
+
+Commands:
+
+- `validate` checks required fields, evidence, risk level, and approval boundaries.
+- `render` creates a Markdown review brief for a human approver.
+- `audit` emits an append-only JSON audit record that stays unapproved by design.
+- `summary` emits compact JSON for connector routers, dashboards, or CI gates.
+
+## Approval policy
+
+| Risk | Approval | Typical approvers |
+| --- | --- | --- |
+| `read` | no | none |
+| `draft` | no | none |
+| `internal_write` | yes | owner |
+| `external_write` | yes | owner, operator |
+| `public_publish` | yes | owner, publisher |
+
+The policy is intentionally conservative. Plans can request stricter local review,
+but they cannot bypass required approval for write or publish actions.
 
 ## Demo
 
