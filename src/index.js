@@ -38,6 +38,7 @@ export function approvalPolicyFor(risk) {
 
 export function renderMarkdown(plan) {
   const status = validatePlan(plan);
+  const policy = approvalPolicyFor(plan.action?.risk);
   const lines = [
     `# Dry-run plan: ${plan.id || 'missing-id'}`, '',
     `Intent: ${plan.intent || 'missing intent'}`,
@@ -45,6 +46,10 @@ export function renderMarkdown(plan) {
     `Operation: ${plan.action?.operation || 'missing'}`,
     `Risk: ${plan.action?.risk || 'missing'}`,
     `Approval required: ${plan.requiresApproval ? 'yes' : 'no'}`, '',
+    '## Approval policy',
+    `Required by policy: ${policy?.requiresApproval ? 'yes' : 'no'}`,
+    `Approvers: ${policy?.approvers?.length ? policy.approvers.join(', ') : 'none'}`,
+    `Reason: ${policy?.reason || 'unknown risk level'}`, '',
     '## Fields'
   ];
   for (const [key,value] of Object.entries(plan.action?.fields || {})) lines.push(`- ${key}: ${JSON.stringify(value)}`);
