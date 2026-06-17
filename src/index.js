@@ -61,6 +61,7 @@ export function renderMarkdown(plan) {
 
 export function auditRecord(plan, actor='agent') {
   const validation = validatePlan(plan);
+  const policy = approvalPolicyFor(plan.action?.risk);
   return {
     type: 'action-dryrun.audit.v1',
     planId: plan.id,
@@ -69,6 +70,8 @@ export function auditRecord(plan, actor='agent') {
     connector: plan.action?.connector,
     operation: plan.action?.operation,
     approved: false,
+    approvalRequired: policy?.requiresApproval ?? false,
+    requiredApprovers: policy?.approvers ?? [],
     validation,
     createdAt: new Date().toISOString()
   };
