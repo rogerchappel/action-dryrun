@@ -1,5 +1,13 @@
 export const RISK_LEVELS = ['read', 'draft', 'internal_write', 'external_write', 'public_publish'];
 
+export const APPROVAL_POLICY = {
+  read: { requiresApproval: false, approvers: [], reason: 'Read-only actions do not mutate systems.' },
+  draft: { requiresApproval: false, approvers: [], reason: 'Draft actions create local or reviewable artifacts only.' },
+  internal_write: { requiresApproval: true, approvers: ['owner'], reason: 'Internal writes change shared systems.' },
+  external_write: { requiresApproval: true, approvers: ['owner', 'operator'], reason: 'External writes can affect third-party records.' },
+  public_publish: { requiresApproval: true, approvers: ['owner', 'publisher'], reason: 'Public publishing needs explicit human review.' }
+};
+
 export function normalizeRisk(value) {
   if (!RISK_LEVELS.includes(value)) throw new Error(`Unknown risk level: ${value}`);
   return value;
@@ -17,9 +25,15 @@ export function validatePlan(plan) {
     if (!RISK_LEVELS.includes(plan.action.risk)) errors.push('action.risk must be one of ' + RISK_LEVELS.join(', '));
   }
   if (!Array.isArray(plan.evidence) || plan.evidence.length === 0) errors.push('evidence must contain at least one item');
-  if (plan.requiresApproval !== true && ['external_write','public_publish'].includes(plan.action?.risk)) errors.push('external writes and public publishes require approval');
+  const policy = approvalPolicyFor(plan.action?.risk);
+  if (policy?.requiresApproval && plan.requiresApproval !== true) errors.push(`${plan.action.risk} actions require approval`);
   if (plan.approved === true) errors.push('dry-run plans must not be pre-approved');
   return { ok: errors.length === 0, errors };
+}
+
+export function approvalPolicyFor(risk) {
+  if (!risk) return null;
+  return APPROVAL_POLICY[normalizeRisk(risk)];
 }
 
 export function renderMarkdown(plan) {
