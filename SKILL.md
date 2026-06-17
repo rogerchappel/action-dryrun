@@ -16,8 +16,13 @@ The skill may read local files and write local output artifacts. It must not cal
 
 Run `npm test`, `npm run check`, `npm run build`, and `npm run smoke` before using release-candidate output.
 
+For connector handoffs, run `node src/cli.js summary fixtures/valid-plan.json`.
+The summary output excludes action field values while preserving risk,
+approval, evidence, and validation status for downstream routers or dashboards.
+
 ## Example
 
 ```bash
 npm run smoke
+node src/cli.js summary fixtures/valid-plan.json
 ```
