@@ -59,6 +59,21 @@ export function renderMarkdown(plan) {
   return lines.join('\n') + '\n';
 }
 
+export function summarizePlan(plan) {
+  const validation = validatePlan(plan);
+  const policy = approvalPolicyFor(plan.action?.risk);
+  return {
+    id: plan?.id ?? null,
+    connector: plan?.action?.connector ?? null,
+    operation: plan?.action?.operation ?? null,
+    risk: plan?.action?.risk ?? null,
+    ok: validation.ok,
+    approvalRequired: policy?.requiresApproval ?? false,
+    evidenceCount: Array.isArray(plan?.evidence) ? plan.evidence.length : 0,
+    errorCount: validation.errors.length
+  };
+}
+
 export function auditRecord(plan, actor='agent') {
   const validation = validatePlan(plan);
   const policy = approvalPolicyFor(plan.action?.risk);
