@@ -95,5 +95,5 @@ Run the same checks locally before opening a PR:
 - `npm run build` - node scripts/validate.js
 - `npm test` - node --test
 - `npm run smoke` - bash scripts/smoke.sh
-- `npm run package:smoke` - npm pack --dry-run
+- `npm run package:smoke` - assert npm pack contents
 - `npm run release:check` - npm run check && npm test && npm run smoke && npm run package:smoke
