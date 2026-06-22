@@ -21,6 +21,9 @@
     "oss"
   ],
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "files": [
     "src",
     "demo",
