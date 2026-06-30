@@ -1,0 +1,20 @@
+{
+  "id": "plan-internal-ticket-update",
+  "intent": "Draft a local review plan for updating an internal ticket status.",
+  "action": {
+    "connector": "project-management",
+    "operation": "update_ticket",
+    "risk": "internal_write",
+    "fields": {
+      "ticketId": "PROJ-42",
+      "status": "ready-for-review"
+    }
+  },
+  "requiresApproval": true,
+  "evidence": [
+    {
+      "source": "docs/TASKS.md",
+      "note": "The release checklist asks for a review status update."
+    }
+  ]
+}
