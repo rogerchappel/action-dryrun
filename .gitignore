@@ -1,4 +1,5 @@
 node_modules/
 coverage/
 tmp-content/
+.tmp/
 .DS_Store
