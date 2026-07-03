@@ -7,9 +7,10 @@
     "action-dryrun": "src/cli.js"
   },
   "scripts": {
-    "test": "node --test",
-    "check": "node --check src/*.js test/*.test.js",
     "build": "node scripts/validate.js",
+    "check": "node --check src/*.js test/*.test.js",
+    "lint": "node --check src/*.js test/*.test.js",
+    "test": "node --test",
     "smoke": "bash scripts/smoke.sh",
     "package:smoke": "node scripts/pack-smoke.mjs",
     "release:check": "npm run check && npm test && npm run smoke && npm run package:smoke"
