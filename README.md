@@ -74,12 +74,10 @@ This project is local-first. It does not execute external actions or write to li
 ## Release checks
 
 ```bash
-npm test
-npm run check
-npm run smoke
-npm run package:smoke
 npm run release:check
 ```
+
+The CI workflow runs the same aggregate gate so pull requests exercise syntax checks, tests, fixture smokes, and the package dry-run before release.
 
 ## Contributing
 
