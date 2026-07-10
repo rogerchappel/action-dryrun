@@ -54,7 +54,7 @@ For a single repeatable command that writes review artifacts under `.tmp/demo-re
 bash demo/run-review-loop.sh
 ```
 
-Promotion notes and a short video outline live in [docs/promo/demo-brief.md](docs/promo/demo-brief.md).
+Promotion notes and short video outlines live in [docs/promo/demo-brief.md](docs/promo/demo-brief.md), [docs/promo/social-hooks.md](docs/promo/social-hooks.md), and [docs/promo/review-loop-video-brief.md](docs/promo/review-loop-video-brief.md).
 A launch-note draft for the scripted review loop lives in [docs/launch-notes/review-loop-demo.md](docs/launch-notes/review-loop-demo.md).
 
 For a one-command local demo, run:
