@@ -8,6 +8,7 @@ Short, fact-grounded post drafts for the fixture-backed demo in this repo.
 2. The demo catches a public-publish action before anything leaves the machine: `fixtures/unsafe-plan.json` fails validation, while `fixtures/valid-plan.json` renders as a draft-only email plan.
 3. Approval workflows get easier to inspect when the artifact is boring JSON plus Markdown. `action-dryrun` keeps connector intent, fields, evidence, and audit metadata in files reviewers can diff.
 4. Local-first demo path: run `bash demo/run-fixture-review.sh` to validate, render, audit, and reject sample action plans without calling Gmail, LinkedIn, or any external API.
+5. A useful approval artifact is boring on purpose: JSON validation, Markdown review, and an audit record you can diff before another layer performs any action.
 
 ## Short Video Beat
 
@@ -15,6 +16,7 @@ Short, fact-grounded post drafts for the fixture-backed demo in this repo.
 - Run `bash demo/run-fixture-review.sh`.
 - Open `.tmp/demo-fixture-review/valid-plan-review.md` for the human-readable review.
 - Open `.tmp/demo-fixture-review/unsafe-plan-validation.json` and point to `"ok": false`.
+- Use [review-loop-video-brief.md](review-loop-video-brief.md) for a longer shot list and guardrails.
 
 ## Guardrails
 
