@@ -67,6 +67,14 @@ The script writes validation JSON, a Markdown review, and an audit record under 
 
 Social hooks for promoting the demo live in [docs/promo/social-hooks.md](docs/promo/social-hooks.md).
 
+For a runnable local review loop that writes validation, Markdown, and audit artifacts, run:
+
+```bash
+bash demo/run-review-demo.sh
+```
+
+See [docs/tutorials/local-action-review-loop.md](docs/tutorials/local-action-review-loop.md) and [docs/promo/local-review-hooks.md](docs/promo/local-review-hooks.md) for the companion walkthrough and hooks.
+
 ## Safety notes
 
 This project is local-first. It does not execute external actions or write to live accounts. Outputs are review artifacts that another approval-controlled layer may consume.
