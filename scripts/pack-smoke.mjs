@@ -15,7 +15,8 @@ const expectedFiles = [
   "LICENSE",
   "CHANGELOG.md",
   "CONTRIBUTING.md",
-  "SECURITY.md"
+  "SECURITY.md",
+  "CODE_OF_CONDUCT.md"
 ];
 
 const output = execFileSync("npm", ["pack", "--dry-run", "--json"], {
