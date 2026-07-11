@@ -29,6 +29,14 @@ Use the fixture-backed walkthrough in [docs/tutorials/review-a-dry-run-plan.md](
 
 Promotion notes and a short video outline live in [docs/promo/demo-brief.md](docs/promo/demo-brief.md).
 
+For a runnable local review loop that writes validation, Markdown, and audit artifacts, run:
+
+```bash
+bash demo/run-review-demo.sh
+```
+
+See [docs/tutorials/local-action-review-loop.md](docs/tutorials/local-action-review-loop.md) and [docs/promo/local-review-hooks.md](docs/promo/local-review-hooks.md) for the companion walkthrough and hooks.
+
 ## Safety notes
 
 This project is local-first. It does not execute external actions or write to live accounts. Outputs are review artifacts that another approval-controlled layer may consume.
