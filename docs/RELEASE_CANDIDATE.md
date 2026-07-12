@@ -28,4 +28,4 @@ ship
 
 ## Final verification
 
-Passed on 2026-06-02 (Australia/Brisbane): npm test, npm run check, npm run build, npm run smoke.
+Passed on 2026-07-12 (Australia/Brisbane): npm run release:check, including npm run check, npm test, npm run smoke, and installed package CLI smoke via npm run package:smoke.
