@@ -75,6 +75,15 @@ bash demo/run-review-demo.sh
 
 See [docs/tutorials/local-action-review-loop.md](docs/tutorials/local-action-review-loop.md) and [docs/promo/local-review-hooks.md](docs/promo/local-review-hooks.md) for the companion walkthrough and hooks.
 
+For a CI-style gate that writes validation JSON, compact summary JSON, a Markdown
+review, and the expected unsafe-fixture failure, run:
+
+```bash
+bash demo/run-ci-summary-gate.sh
+```
+
+See [docs/tutorials/ci-summary-gate.md](docs/tutorials/ci-summary-gate.md).
+
 ## Safety notes
 
 This project is local-first. It does not execute external actions or write to live accounts. Outputs are review artifacts that another approval-controlled layer may consume.
