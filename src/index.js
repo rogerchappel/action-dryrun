@@ -15,7 +15,7 @@ export function normalizeRisk(value) {
 
 export function validatePlan(plan) {
   const errors = [];
-  if (!plan || typeof plan !== 'object') errors.push('plan must be an object');
+  if (!plan || typeof plan !== 'object') return { ok: false, errors: ['plan must be an object'] };
   if (!plan.id) errors.push('id is required');
   if (!plan.intent) errors.push('intent is required');
   if (!plan.action || typeof plan.action !== 'object') errors.push('action object is required');
