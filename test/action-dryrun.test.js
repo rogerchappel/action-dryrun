@@ -8,6 +8,9 @@ const valid = JSON.parse(fs.readFileSync('fixtures/valid-plan.json','utf8'));
 const unsafe = JSON.parse(fs.readFileSync('fixtures/unsafe-plan.json','utf8'));
 
 test('validates safe dry-run plans', () => assert.equal(validatePlan(valid).ok, true));
+test('returns validation errors for a null plan', () => {
+  assert.deepEqual(validatePlan(null), { ok: false, errors: ['plan must be an object'] });
+});
 test('rejects unsafe external writes without approval', () => {
   const result = validatePlan(unsafe); assert.equal(result.ok, false); assert.match(result.errors.join(' '), /require approval/);
 });
@@ -29,6 +32,12 @@ test('summarizes plans for router handoff', () => {
 test('cli validate returns nonzero for invalid plans', () => {
   const r = spawnSync('node', ['src/cli.js','validate','fixtures/unsafe-plan.json'], {encoding:'utf8'});
   assert.equal(r.status, 2); assert.match(r.stdout, /public_publish actions require approval/);
+});
+test('cli validate returns validation errors for a null plan', () => {
+  const r = spawnSync('node', ['src/cli.js','validate','fixtures/null-plan.json'], {encoding:'utf8'});
+  assert.equal(r.status, 2);
+  assert.deepEqual(JSON.parse(r.stdout), { ok: false, errors: ['plan must be an object'] });
+  assert.equal(r.stderr, '');
 });
 test('cli render prints review summary', () => {
   const out = execFileSync('node', ['src/cli.js','render','fixtures/valid-plan.json'], {encoding:'utf8'});
