@@ -57,3 +57,24 @@ test('cli summary prints compact json', () => {
   const out = execFileSync('node', ['src/cli.js','summary','fixtures/valid-plan.json'], {encoding:'utf8'});
   assert.equal(JSON.parse(out).ok, true);
 });
+test('cli audit accepts an explicit actor', () => {
+  const out = execFileSync('node', ['src/cli.js','audit','fixtures/valid-plan.json','--actor','reviewer'], {encoding:'utf8'});
+  assert.equal(JSON.parse(out).actor, 'reviewer');
+});
+test('cli audit defaults to the agent actor when absent', () => {
+  const out = execFileSync('node', ['src/cli.js','audit','fixtures/valid-plan.json'], {encoding:'utf8'});
+  assert.equal(JSON.parse(out).actor, 'agent');
+});
+for (const [name, args, diagnostic] of [
+  ['stray positional input', ['audit','fixtures/valid-plan.json','unexpected'], /Unexpected argument: unexpected/],
+  ['unknown options', ['audit','fixtures/valid-plan.json','--unknown'], /Unknown option: --unknown/],
+  ['a missing actor value', ['audit','fixtures/valid-plan.json','--actor'], /--actor requires a non-empty name/],
+  ['an empty actor value', ['audit','fixtures/valid-plan.json','--actor',''], /--actor requires a non-empty name/],
+]) {
+  test(`cli rejects ${name} without emitting an audit record`, () => {
+    const r = spawnSync('node', ['src/cli.js', ...args], {encoding:'utf8'});
+    assert.equal(r.status, 1);
+    assert.equal(r.stdout, '');
+    assert.match(r.stderr, diagnostic);
+  });
+}

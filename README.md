@@ -20,6 +20,7 @@ npm install -g action-dryrun
 ```bash
 node src/cli.js validate fixtures/valid-plan.json
 node src/cli.js render fixtures/valid-plan.json
+node src/cli.js audit fixtures/valid-plan.json --actor reviewer
 node src/cli.js summary fixtures/valid-plan.json
 action-dryrun --version
 ```
