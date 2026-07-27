@@ -11,6 +11,34 @@ test('validates safe dry-run plans', () => assert.equal(validatePlan(valid).ok, 
 test('returns validation errors for a null plan', () => {
   assert.deepEqual(validatePlan(null), { ok: false, errors: ['plan must be an object'] });
 });
+test('rejects malformed public plan fields', () => {
+  const cases = [
+    [{ ...valid, id: 123 }, 'id must be a non-empty string'],
+    [{ ...valid, id: '   ' }, 'id must be a non-empty string'],
+    [{ ...valid, intent: [] }, 'intent must be a non-empty string'],
+    [{ ...valid, action: [] }, 'action must be an object'],
+    [{ ...valid, action: { ...valid.action, connector: 7 } }, 'action.connector must be a non-empty string'],
+    [{ ...valid, action: { ...valid.action, operation: true } }, 'action.operation must be a non-empty string'],
+    [{ ...valid, action: { ...valid.action, fields: [] } }, 'action.fields must be an object'],
+  ];
+
+  for (const [plan, error] of cases) assert.ok(validatePlan(plan).errors.includes(error));
+});
+test('rejects malformed evidence entries', () => {
+  for (const evidence of [
+    ['citation'],
+    [{}],
+    [{ source: '', note: 'usable' }],
+    [{ source: 'fixture', note: '   ' }],
+  ]) {
+    const result = validatePlan({ ...valid, evidence });
+    assert.equal(result.ok, false);
+    assert.match(result.errors.join('\n'), /evidence\[0\]/);
+  }
+});
+test('accepts the documented plan schema', () => {
+  assert.deepEqual(validatePlan(valid), { ok: true, errors: [] });
+});
 test('rejects unsafe external writes without approval', () => {
   const result = validatePlan(unsafe); assert.equal(result.ok, false); assert.match(result.errors.join(' '), /require approval/);
 });
@@ -28,6 +56,25 @@ test('summarizes plans for router handoff', () => {
   const summary = summarizePlan(valid);
   assert.equal(summary.ok, true);
   assert.equal(summary.evidenceCount, 1);
+});
+test('render, summary, and audit safely describe invalid input', () => {
+  for (const plan of [null, { ...valid, action: null, evidence: ['citation'] }]) {
+    assert.doesNotThrow(() => renderMarkdown(plan));
+    assert.doesNotThrow(() => summarizePlan(plan));
+    assert.doesNotThrow(() => auditRecord(plan));
+  }
+
+  const markdown = renderMarkdown({ ...valid, evidence: ['citation'] });
+  assert.doesNotMatch(markdown, /undefined/);
+  assert.match(markdown, /Invalid evidence item/);
+  assert.equal(summarizePlan({ ...valid, evidence: ['citation'] }).evidenceCount, 0);
+  assert.equal(auditRecord(null).planId, null);
+});
+test('render, summary, and audit safely handle an unknown risk', () => {
+  const plan = { ...valid, action: { ...valid.action, risk: 'surprise' } };
+  assert.doesNotThrow(() => renderMarkdown(plan));
+  assert.doesNotThrow(() => summarizePlan(plan));
+  assert.doesNotThrow(() => auditRecord(plan));
 });
 test('cli validate returns nonzero for invalid plans', () => {
   const r = spawnSync('node', ['src/cli.js','validate','fixtures/unsafe-plan.json'], {encoding:'utf8'});
