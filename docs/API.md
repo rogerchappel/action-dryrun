@@ -5,3 +5,46 @@ action-dryrun exposes a small ESM library from `src/index.js` and a CLI from `sr
 ## Stability
 
 The V1 API is suitable for release-candidate testing. Treat output shapes as versioned review artifacts before wiring them into external executors.
+
+## Plan schema
+
+`validatePlan(plan)` accepts a plain object with this shape:
+
+```json
+{
+  "id": "plan_demo_001",
+  "intent": "draft a follow-up email",
+  "requiresApproval": false,
+  "approved": false,
+  "action": {
+    "connector": "gmail",
+    "operation": "draft_email",
+    "risk": "draft",
+    "fields": {
+      "subject": "Follow-up"
+    }
+  },
+  "evidence": [
+    {
+      "source": "meeting-notes.md",
+      "note": "User requested a follow-up draft"
+    }
+  ]
+}
+```
+
+The `id`, `intent`, `action.connector`, and `action.operation` values must be
+non-empty strings. `action` and `action.fields` must be plain objects.
+`action.risk` must be one of the exported `RISK_LEVELS`. `evidence` must be a
+non-empty array, and every entry must be an object with non-empty string
+`source` and `note` values.
+
+The `fixtures/valid-plan.json` file is an executable example of the schema:
+
+```bash
+node src/cli.js validate fixtures/valid-plan.json
+```
+
+Rendering, summary, and audit APIs report invalid plans defensively, but their
+output does not make an invalid plan safe to execute. Check `validatePlan()` or
+the summary `ok` field before consuming any review artifact.

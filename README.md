@@ -27,7 +27,7 @@ action-dryrun --version
 
 Commands:
 
-- `validate` checks required fields, evidence, risk level, and approval boundaries.
+- `validate` checks the documented [plan schema](docs/API.md#plan-schema), evidence, risk level, and approval boundaries.
 - `render` creates a Markdown review brief for a human approver.
 - `audit` emits an append-only JSON audit record that stays unapproved by design.
 - `summary` emits compact JSON for connector routers, dashboards, or CI gates.
