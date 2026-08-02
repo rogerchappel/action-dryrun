@@ -37,7 +37,11 @@ The `id`, `intent`, `action.connector`, and `action.operation` values must be
 non-empty strings. `action` and `action.fields` must be plain objects.
 `action.risk` must be one of the exported `RISK_LEVELS`. `evidence` must be a
 non-empty array, and every entry must be an object with non-empty string
-`source` and `note` values.
+`source` and `note` values. `requiresApproval` and `approved` are optional, but
+must be booleans when provided. Omitting `requiresApproval` is valid only when
+the selected risk policy does not require approval; higher-risk plans must set
+it to `true`. A dry-run plan may set `approved` to `false` or omit it, but must
+never set it to `true` because dry-run artifacts cannot grant approval.
 
 The `fixtures/valid-plan.json` file is an executable example of the schema:
 
