@@ -39,6 +39,23 @@ test('rejects malformed evidence entries', () => {
 test('accepts the documented plan schema', () => {
   assert.deepEqual(validatePlan(valid), { ok: true, errors: [] });
 });
+test('accepts boolean or omitted approval fields according to policy', () => {
+  assert.equal(validatePlan({ ...valid, requiresApproval: false, approved: false }).ok, true);
+  const { requiresApproval, approved, ...withoutApprovalFields } = valid;
+  assert.equal(validatePlan(withoutApprovalFields).ok, true);
+});
+test('rejects non-boolean approval fields with field-specific errors', () => {
+  for (const [field, value] of [
+    ['requiresApproval', 'false'],
+    ['requiresApproval', 1],
+    ['approved', 'yes'],
+    ['approved', null],
+  ]) {
+    const result = validatePlan({ ...valid, [field]: value });
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.includes(`${field} must be a boolean when provided`));
+  }
+});
 test('rejects unsafe external writes without approval', () => {
   const result = validatePlan(unsafe); assert.equal(result.ok, false); assert.match(result.errors.join(' '), /require approval/);
 });
@@ -70,6 +87,13 @@ test('render, summary, and audit safely describe invalid input', () => {
   assert.equal(summarizePlan({ ...valid, evidence: ['citation'] }).evidenceCount, 0);
   assert.equal(auditRecord(null).planId, null);
 });
+test('render, summary, and audit do not treat malformed strings as approval state', () => {
+  const plan = { ...valid, requiresApproval: 'false', approved: 'yes' };
+  assert.match(renderMarkdown(plan), /Approval required: no/);
+  assert.equal(summarizePlan(plan).approvalRequired, false);
+  assert.equal(auditRecord(plan).approved, false);
+  assert.equal(auditRecord(plan).approvalRequired, false);
+});
 test('render, summary, and audit safely handle an unknown risk', () => {
   const plan = { ...valid, action: { ...valid.action, risk: 'surprise' } };
   assert.doesNotThrow(() => renderMarkdown(plan));
@@ -84,6 +108,15 @@ test('cli validate returns validation errors for a null plan', () => {
   const r = spawnSync('node', ['src/cli.js','validate','fixtures/null-plan.json'], {encoding:'utf8'});
   assert.equal(r.status, 2);
   assert.deepEqual(JSON.parse(r.stdout), { ok: false, errors: ['plan must be an object'] });
+  assert.equal(r.stderr, '');
+});
+test('cli validate rejects malformed approval booleans', () => {
+  const r = spawnSync('node', ['src/cli.js','validate','fixtures/malformed-approval-plan.json'], {encoding:'utf8'});
+  assert.equal(r.status, 2);
+  assert.deepEqual(JSON.parse(r.stdout).errors, [
+    'requiresApproval must be a boolean when provided',
+    'approved must be a boolean when provided',
+  ]);
   assert.equal(r.stderr, '');
 });
 test('cli render prints review summary', () => {
