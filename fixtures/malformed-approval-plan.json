@@ -1,0 +1,20 @@
+{
+  "id": "plan_malformed_approval",
+  "intent": "demonstrate invalid approval field types",
+  "requiresApproval": "false",
+  "approved": "yes",
+  "action": {
+    "connector": "gmail",
+    "operation": "draft_email",
+    "risk": "draft",
+    "fields": {
+      "subject": "Follow-up"
+    }
+  },
+  "evidence": [
+    {
+      "source": "test fixture",
+      "note": "Approval fields must be JSON booleans"
+    }
+  ]
+}

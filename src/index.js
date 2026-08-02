@@ -51,6 +51,12 @@ export function validatePlan(plan) {
       }
     });
   }
+  if (plan.requiresApproval !== undefined && typeof plan.requiresApproval !== 'boolean') {
+    errors.push('requiresApproval must be a boolean when provided');
+  }
+  if (plan.approved !== undefined && typeof plan.approved !== 'boolean') {
+    errors.push('approved must be a boolean when provided');
+  }
   const policy = policyForPlan(plan);
   if (policy?.requiresApproval && plan.requiresApproval !== true) errors.push(`${plan.action.risk} actions require approval`);
   if (plan.approved === true) errors.push('dry-run plans must not be pre-approved');
@@ -73,7 +79,7 @@ export function renderMarkdown(plan) {
     `Connector: ${isNonEmptyString(action.connector) ? action.connector : 'missing'}`,
     `Operation: ${isNonEmptyString(action.operation) ? action.operation : 'missing'}`,
     `Risk: ${isNonEmptyString(action.risk) ? action.risk : 'missing'}`,
-    `Approval required: ${safePlan.requiresApproval ? 'yes' : 'no'}`, '',
+    `Approval required: ${safePlan.requiresApproval === true ? 'yes' : 'no'}`, '',
     '## Approval policy',
     `Required by policy: ${policy?.requiresApproval ? 'yes' : 'no'}`,
     `Approvers: ${policy?.approvers?.length ? policy.approvers.join(', ') : 'none'}`,
