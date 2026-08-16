@@ -123,16 +123,32 @@ test('cli render prints review summary', () => {
   const out = execFileSync('node', ['src/cli.js','render','fixtures/valid-plan.json'], {encoding:'utf8'});
   assert.match(out, /Dry-run plan/);
 });
-test('cli prints package version', () => {
-  const out = execFileSync('node', ['src/cli.js','--version'], {encoding:'utf8'});
-  assert.equal(out.trim(), '0.1.0');
-});
+for (const versionCommand of ['--version', '-v', 'version']) {
+  test(`cli prints package version for ${versionCommand}`, () => {
+    const out = execFileSync('node', ['src/cli.js', versionCommand], {encoding:'utf8'});
+    assert.equal(out.trim(), '0.1.0');
+  });
+}
 test('cli help documents supported commands', () => {
   const r = spawnSync('node', ['src/cli.js','--help'], {encoding:'utf8'});
   assert.equal(r.status, 0);
   assert.match(r.stdout, /Usage: action-dryrun/);
   assert.match(r.stdout, /validate\|render\|audit\|summary/);
 });
+for (const [command, trailing, diagnostic] of [
+  ['--help', 'extra', /Unexpected argument: extra/],
+  ['--help', '--unknown', /Unknown option: --unknown/],
+  ['--version', 'extra', /Unexpected argument: extra/],
+  ['-v', '--unknown', /Unknown option: --unknown/],
+  ['version', 'extra', /Unexpected argument: extra/],
+]) {
+  test(`cli rejects trailing input for ${command}`, () => {
+    const r = spawnSync('node', ['src/cli.js', command, trailing], {encoding:'utf8'});
+    assert.equal(r.status, 1);
+    assert.equal(r.stdout, '');
+    assert.match(r.stderr, diagnostic);
+  });
+}
 test('cli summary prints compact json', () => {
   const out = execFileSync('node', ['src/cli.js','summary','fixtures/valid-plan.json'], {encoding:'utf8'});
   assert.equal(JSON.parse(out).ok, true);
