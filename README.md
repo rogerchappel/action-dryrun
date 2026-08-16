@@ -22,8 +22,12 @@ node src/cli.js validate fixtures/valid-plan.json
 node src/cli.js render fixtures/valid-plan.json
 node src/cli.js audit fixtures/valid-plan.json --actor reviewer
 node src/cli.js summary fixtures/valid-plan.json
+action-dryrun --help
 action-dryrun --version
 ```
+
+The version command also accepts `-v` and `version`. Help and version commands
+take no positional arguments or additional options.
 
 Commands:
 

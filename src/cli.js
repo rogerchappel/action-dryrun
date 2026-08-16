@@ -5,6 +5,9 @@ import { validatePlan, renderMarkdown, auditRecord, summarizePlan } from './inde
 const VERSION = '0.1.0';
 
 function load(file) { return JSON.parse(fs.readFileSync(file, 'utf8')); }
+function rejectUnexpected(value) {
+  if (value) throw new Error(value.startsWith('-') ? 'Unknown option: ' + value : 'Unexpected argument: ' + value);
+}
 function parseArguments(cmd, file, rest) {
   if (!['validate', 'render', 'audit', 'summary'].includes(cmd)) throw new Error('Unknown command: ' + cmd);
   if (!file) throw new Error('Missing plan file');
@@ -25,6 +28,13 @@ function parseArguments(cmd, file, rest) {
   return {};
 }
 const [cmd, file, ...rest] = process.argv.slice(2);
+try {
+  if (cmd === '--help') rejectUnexpected(file);
+  if (cmd === '--version' || cmd === '-v' || cmd === 'version') rejectUnexpected(file);
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
 if (!cmd || cmd === '--help') {
   console.log('Usage: action-dryrun <validate|render|audit|summary> plan.json [--actor name]\n       action-dryrun --version');
   process.exit(cmd ? 0 : 1);
