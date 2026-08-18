@@ -1,0 +1,20 @@
+{
+  "id": "plan_demo_conflicting_draft",
+  "intent": "draft a local follow-up email",
+  "requiresApproval": true,
+  "approved": false,
+  "action": {
+    "connector": "gmail",
+    "operation": "draft_email",
+    "risk": "draft",
+    "fields": {
+      "subject": "Follow-up"
+    }
+  },
+  "evidence": [
+    {
+      "source": "meeting-notes.md",
+      "note": "User requested a follow-up draft"
+    }
+  ]
+}
