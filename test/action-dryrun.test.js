@@ -57,7 +57,27 @@ test('rejects non-boolean approval fields with field-specific errors', () => {
   }
 });
 test('rejects unsafe external writes without approval', () => {
-  const result = validatePlan(unsafe); assert.equal(result.ok, false); assert.match(result.errors.join(' '), /require approval/);
+  const result = validatePlan(unsafe);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.includes('requiresApproval must be true for action.risk public_publish'));
+});
+test('requires declared approval to match the risk policy in both directions', () => {
+  for (const [risk, requiresApproval, expected] of [
+    ['read', true, false],
+    ['draft', true, false],
+    ['internal_write', false, true],
+    ['external_write', false, true],
+    ['public_publish', false, true],
+  ]) {
+    const plan = {
+      ...valid,
+      requiresApproval,
+      action: { ...valid.action, risk },
+    };
+    const result = validatePlan(plan);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.includes(`requiresApproval must be ${expected} for action.risk ${risk}`));
+  }
 });
 test('renders markdown with evidence', () => assert.match(renderMarkdown(valid), /## Evidence/));
 test('maps risk levels to approval policy', () => {
@@ -102,7 +122,13 @@ test('render, summary, and audit safely handle an unknown risk', () => {
 });
 test('cli validate returns nonzero for invalid plans', () => {
   const r = spawnSync('node', ['src/cli.js','validate','fixtures/unsafe-plan.json'], {encoding:'utf8'});
-  assert.equal(r.status, 2); assert.match(r.stdout, /public_publish actions require approval/);
+  assert.equal(r.status, 2); assert.match(r.stdout, /requiresApproval must be true for action.risk public_publish/);
+});
+test('cli validate rejects approval on a draft-risk plan', () => {
+  const r = spawnSync('node', ['src/cli.js','validate','fixtures/conflicting-draft-plan.json'], {encoding:'utf8'});
+  assert.equal(r.status, 2);
+  assert.ok(JSON.parse(r.stdout).errors.includes('requiresApproval must be false for action.risk draft'));
+  assert.equal(r.stderr, '');
 });
 test('cli validate returns validation errors for a null plan', () => {
   const r = spawnSync('node', ['src/cli.js','validate','fixtures/null-plan.json'], {encoding:'utf8'});
