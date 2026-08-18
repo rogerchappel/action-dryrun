@@ -52,12 +52,12 @@ Expected result:
 {
   "ok": false,
   "errors": [
-    "external writes and public publishes require approval"
+    "requiresApproval must be true for action.risk public_publish"
   ]
 }
 ```
 
-Use this pair of fixtures in demos to show the core boundary: draft-like local review artifacts can pass, while external writes and public publish operations require approval.
+Use this pair of fixtures in demos to show the core boundary: draft-like local review artifacts declare no approval, while external writes and public publish operations must declare approval. A declared value that conflicts with the risk policy is rejected.
 
 ## Smoke check
 

@@ -38,9 +38,12 @@ non-empty strings. `action` and `action.fields` must be plain objects.
 `action.risk` must be one of the exported `RISK_LEVELS`. `evidence` must be a
 non-empty array, and every entry must be an object with non-empty string
 `source` and `note` values. `requiresApproval` and `approved` are optional, but
-must be booleans when provided. Omitting `requiresApproval` is valid only when
-the selected risk policy does not require approval; higher-risk plans must set
-it to `true`. A dry-run plan may set `approved` to `false` or omit it, but must
+must be booleans when provided. The risk policy is authoritative when
+`requiresApproval` is declared: it must be `false` for `read` and `draft`, and
+`true` for `internal_write`, `external_write`, and `public_publish`. A conflicting
+value is rejected with a `requiresApproval` validation error. Omitting
+`requiresApproval` is valid only for `read` and `draft`; approval-required plans
+must declare it as `true`. A dry-run plan may set `approved` to `false` or omit it, but must
 never set it to `true` because dry-run artifacts cannot grant approval.
 
 The `fixtures/valid-plan.json` file is an executable example of the schema:

@@ -46,8 +46,9 @@ Commands:
 | `external_write` | yes | owner, operator |
 | `public_publish` | yes | owner, publisher |
 
-The policy is intentionally conservative. Plans can request stricter local review,
-but they cannot bypass required approval for write or publish actions.
+The policy is authoritative: a declared `requiresApproval` value must exactly
+match the row for its risk. Conflicts in either direction are rejected, keeping
+validation, rendered plans, summaries, and audit records consistent.
 
 ## Demo
 

@@ -58,7 +58,11 @@ export function validatePlan(plan) {
     errors.push('approved must be a boolean when provided');
   }
   const policy = policyForPlan(plan);
-  if (policy?.requiresApproval && plan.requiresApproval !== true) errors.push(`${plan.action.risk} actions require approval`);
+  if (policy && typeof plan.requiresApproval === 'boolean' && plan.requiresApproval !== policy.requiresApproval) {
+    errors.push(`requiresApproval must be ${policy.requiresApproval} for action.risk ${plan.action.risk}`);
+  } else if (policy?.requiresApproval && plan.requiresApproval !== true) {
+    errors.push(`requiresApproval must be true for action.risk ${plan.action.risk}`);
+  }
   if (plan.approved === true) errors.push('dry-run plans must not be pre-approved');
   return { ok: errors.length === 0, errors };
 }
