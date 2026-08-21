@@ -29,6 +29,10 @@ action-dryrun --version
 The version command also accepts `-v` and `version`. Help and version commands
 take no positional arguments or additional options.
 
+Explicit actor names must contain a non-whitespace character. The CLI trims
+surrounding whitespace before writing the actor to the audit record; when
+`--actor` is omitted, the actor remains `agent`.
+
 Commands:
 
 - `validate` checks the documented [plan schema](docs/API.md#plan-schema), evidence, risk level, and approval boundaries.

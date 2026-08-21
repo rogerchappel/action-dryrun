@@ -19,11 +19,11 @@ function parseArguments(cmd, file, rest) {
     if (rest[0] !== '--actor') {
       throw new Error(rest[0].startsWith('-') ? 'Unknown option: ' + rest[0] : 'Unexpected argument: ' + rest[0]);
     }
-    if (!rest[1]) throw new Error('--actor requires a non-empty name');
+    if (!rest[1]?.trim()) throw new Error('--actor requires a non-empty name');
     if (rest.length > 2) {
       throw new Error(rest[2].startsWith('-') ? 'Unknown option: ' + rest[2] : 'Unexpected argument: ' + rest[2]);
     }
-    return { actor: rest[1] };
+    return { actor: rest[1].trim() };
   }
   return {};
 }
