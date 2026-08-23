@@ -55,3 +55,15 @@ node src/cli.js validate fixtures/valid-plan.json
 Rendering, summary, and audit APIs report invalid plans defensively, but their
 output does not make an invalid plan safe to execute. Check `validatePlan()` or
 the summary `ok` field before consuming any review artifact.
+
+## Markdown rendering
+
+`renderMarkdown(plan)` produces a fixed review-document structure. All
+user-controlled scalar content is normalized to a single line before it is
+interpolated: CR, LF, CRLF, U+2028, and U+2029 separators become spaces, and a
+leading Markdown heading, quote, list, or fence marker is backslash-escaped.
+The contract covers `id`, `intent`, connector and operation names, field keys
+and JSON values (including nested string content), and evidence sources and
+notes. Input text therefore stays readable without being able to create new
+headings, sections, list items, block quotes, or fenced blocks in the rendered
+artifact.

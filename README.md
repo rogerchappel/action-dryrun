@@ -40,6 +40,13 @@ Commands:
 - `audit` emits an append-only JSON audit record that stays unapproved by design.
 - `summary` emits compact JSON for connector routers, dashboards, or CI gates.
 
+Markdown rendering keeps every user-controlled scalar on one line: CR, LF,
+CRLF, and Unicode line separators become spaces, and leading Markdown
+structure markers are escaped. This applies to plan identity and intent,
+connector and operation names, field keys and values, and evidence source and
+note text, so input cannot add headings, sections, or list items to the review
+brief. The readable text remains present for human review.
+
 ## Approval policy
 
 | Risk | Approval | Typical approvers |
