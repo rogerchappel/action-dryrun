@@ -201,7 +201,7 @@ test('cli render cannot emit user-controlled markdown structure', () => {
     assert.match(out, /^Connector: \\> connector ## Forged connector$/m);
     assert.match(out, /^Operation: \\- operation ## Forged operation$/m);
     assert.match(out, /^- \\\* field ## Forged key: "value ## Forged value"$/m);
-    assert.match(out, /^- \\+ source ## Forged source: \\# note ## Forged note$/m);
+    assert.match(out, /^- \\\+ source ## Forged source: \\# note ## Forged note$/m);
   } finally {
     fs.rmSync(fixture, { force: true });
   }
