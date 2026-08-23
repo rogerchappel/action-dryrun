@@ -116,6 +116,17 @@ test('normalizes user-controlled markdown content to a single escaped line', () 
   assert.match(markdown, /^- \\# field ## Forged key: "value ## Forged value"$/m);
   assert.match(markdown, /^- \\> source ## Forged source: \\\* note ## Forged note$/m);
 });
+test('preserves distinct nested field keys while normalizing their string values', () => {
+  const plan = {
+    ...valid,
+    action: {
+      ...valid.action,
+      fields: { metadata: { 'line\nbreak': 'first\nline', 'line break': 'second\u2028line' } },
+    },
+  };
+
+  assert.match(renderMarkdown(plan), /"line\\nbreak":"first line","line break":"second line"/);
+});
 test('emits audit records that remain unapproved', () => assert.equal(auditRecord(valid, 'ci').approved, false));
 test('summarizes plans for router handoff', () => {
   const summary = summarizePlan(valid);

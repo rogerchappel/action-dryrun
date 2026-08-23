@@ -42,7 +42,7 @@ function normalizeJsonContent(value) {
   if (typeof value === 'string') return normalizeMarkdownText(value);
   if (Array.isArray(value)) return value.map(normalizeJsonContent);
   if (isRecord(value)) {
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [normalizeMarkdownText(key), normalizeJsonContent(item)]));
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, normalizeJsonContent(item)]));
   }
   return value;
 }
