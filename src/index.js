@@ -30,6 +30,28 @@ function isValidEvidenceItem(item) {
   return isRecord(item) && isNonEmptyString(item.source) && isNonEmptyString(item.note);
 }
 
+function normalizeMarkdownText(value) {
+  return String(value).replace(/\r\n?|\n|\u2028|\u2029/gu, ' ').replace(/[\t ]+/gu, ' ').trim();
+}
+
+function markdownInline(value) {
+  return normalizeMarkdownText(value).replace(/^(#{1,6}(?=\s)|[>*+-](?=\s)|\d+[.)](?=\s)|`{3,}|~{3,})/u, '\\$1');
+}
+
+function normalizeJsonContent(value) {
+  if (typeof value === 'string') return normalizeMarkdownText(value);
+  if (Array.isArray(value)) return value.map(normalizeJsonContent);
+  if (isRecord(value)) {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, normalizeJsonContent(item)]));
+  }
+  return value;
+}
+
+function markdownJson(value) {
+  const serialized = JSON.stringify(normalizeJsonContent(value));
+  return serialized === undefined ? markdownInline(String(value)) : serialized;
+}
+
 export function validatePlan(plan) {
   const errors = [];
   if (!isRecord(plan)) return { ok: false, errors: ['plan must be an object'] };
@@ -78,11 +100,11 @@ export function renderMarkdown(plan) {
   const action = isRecord(safePlan.action) ? safePlan.action : {};
   const policy = policyForPlan(safePlan);
   const lines = [
-    `# Dry-run plan: ${isNonEmptyString(safePlan.id) ? safePlan.id : 'missing-id'}`, '',
-    `Intent: ${isNonEmptyString(safePlan.intent) ? safePlan.intent : 'missing intent'}`,
-    `Connector: ${isNonEmptyString(action.connector) ? action.connector : 'missing'}`,
-    `Operation: ${isNonEmptyString(action.operation) ? action.operation : 'missing'}`,
-    `Risk: ${isNonEmptyString(action.risk) ? action.risk : 'missing'}`,
+    `# Dry-run plan: ${isNonEmptyString(safePlan.id) ? markdownInline(safePlan.id) : 'missing-id'}`, '',
+    `Intent: ${isNonEmptyString(safePlan.intent) ? markdownInline(safePlan.intent) : 'missing intent'}`,
+    `Connector: ${isNonEmptyString(action.connector) ? markdownInline(action.connector) : 'missing'}`,
+    `Operation: ${isNonEmptyString(action.operation) ? markdownInline(action.operation) : 'missing'}`,
+    `Risk: ${isNonEmptyString(action.risk) ? markdownInline(action.risk) : 'missing'}`,
     `Approval required: ${safePlan.requiresApproval === true ? 'yes' : 'no'}`, '',
     '## Approval policy',
     `Required by policy: ${policy?.requiresApproval ? 'yes' : 'no'}`,
@@ -91,15 +113,15 @@ export function renderMarkdown(plan) {
     '## Fields'
   ];
   if (isRecord(action.fields)) {
-    for (const [key,value] of Object.entries(action.fields)) lines.push(`- ${key}: ${JSON.stringify(value)}`);
+    for (const [key,value] of Object.entries(action.fields)) lines.push(`- ${markdownInline(key)}: ${markdownJson(value)}`);
   }
   lines.push('', '## Evidence');
   if (Array.isArray(safePlan.evidence)) {
     for (const item of safePlan.evidence) {
-      lines.push(isValidEvidenceItem(item) ? `- ${item.source}: ${item.note}` : '- Invalid evidence item');
+      lines.push(isValidEvidenceItem(item) ? `- ${markdownInline(item.source)}: ${markdownInline(item.note)}` : '- Invalid evidence item');
     }
   }
-  if (!status.ok) lines.push('', '## Validation errors', ...status.errors.map(e => `- ${e}`));
+  if (!status.ok) lines.push('', '## Validation errors', ...status.errors.map(e => `- ${markdownInline(e)}`));
   return lines.join('\n') + '\n';
 }
 
