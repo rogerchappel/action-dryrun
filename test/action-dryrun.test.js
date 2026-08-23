@@ -88,6 +88,34 @@ test('maps risk levels to approval policy', () => {
 test('renders approval policy in markdown', () => {
   assert.match(renderMarkdown(valid), /## Approval policy/);
 });
+test('normalizes user-controlled markdown content to a single escaped line', () => {
+  const plan = {
+    ...valid,
+    id: 'demo\r\n## Forged id',
+    intent: '> intent\u2028- forged item',
+    action: {
+      ...valid.action,
+      connector: '# connector\n## Forged connector',
+      operation: '- operation\u2029## Forged operation',
+      fields: {
+        '# field\r\n## Forged key': 'value\n## Forged value',
+      },
+    },
+    evidence: [{
+      source: '> source\r\n## Forged source',
+      note: '* note\u2028## Forged note',
+    }],
+  };
+
+  const markdown = renderMarkdown(plan);
+  assert.doesNotMatch(markdown, /^(?:## Forged|[>*+-] (?:intent|operation|note)|# connector)/mu);
+  assert.match(markdown, /^# Dry-run plan: demo ## Forged id$/m);
+  assert.match(markdown, /^Intent: \\> intent - forged item$/m);
+  assert.match(markdown, /^Connector: \\# connector ## Forged connector$/m);
+  assert.match(markdown, /^Operation: \\- operation ## Forged operation$/m);
+  assert.match(markdown, /^- \\# field ## Forged key: "value ## Forged value"$/m);
+  assert.match(markdown, /^- \\> source ## Forged source: \\\* note ## Forged note$/m);
+});
 test('emits audit records that remain unapproved', () => assert.equal(auditRecord(valid, 'ci').approved, false));
 test('summarizes plans for router handoff', () => {
   const summary = summarizePlan(valid);
@@ -148,6 +176,35 @@ test('cli validate rejects malformed approval booleans', () => {
 test('cli render prints review summary', () => {
   const out = execFileSync('node', ['src/cli.js','render','fixtures/valid-plan.json'], {encoding:'utf8'});
   assert.match(out, /Dry-run plan/);
+});
+test('cli render cannot emit user-controlled markdown structure', () => {
+  const fixture = `.tmp-render-normalization-${process.pid}.json`;
+  const plan = {
+    ...valid,
+    id: 'cli\r\n## Forged id',
+    intent: '# intent\u2028## Forged intent',
+    action: {
+      ...valid.action,
+      connector: '> connector\n## Forged connector',
+      operation: '- operation\u2029## Forged operation',
+      fields: { '* field\r\n## Forged key': 'value\n## Forged value' },
+    },
+    evidence: [{ source: '+ source\n## Forged source', note: '# note\u2028## Forged note' }],
+  };
+
+  try {
+    fs.writeFileSync(fixture, JSON.stringify(plan));
+    const out = execFileSync('node', ['src/cli.js', 'render', fixture], { encoding: 'utf8' });
+    assert.doesNotMatch(out, /^## Forged/m);
+    assert.match(out, /^# Dry-run plan: cli ## Forged id$/m);
+    assert.match(out, /^Intent: \\# intent ## Forged intent$/m);
+    assert.match(out, /^Connector: \\> connector ## Forged connector$/m);
+    assert.match(out, /^Operation: \\- operation ## Forged operation$/m);
+    assert.match(out, /^- \\\* field ## Forged key: "value ## Forged value"$/m);
+    assert.match(out, /^- \\+ source ## Forged source: \\# note ## Forged note$/m);
+  } finally {
+    fs.rmSync(fixture, { force: true });
+  }
 });
 for (const versionCommand of ['--version', '-v', 'version']) {
   test(`cli prints package version for ${versionCommand}`, () => {
