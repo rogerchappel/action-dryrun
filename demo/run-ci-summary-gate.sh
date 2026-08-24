@@ -28,10 +28,17 @@ set -e
 cat "$OUT/unsafe-validation.json"
 test "$unsafe_status" -eq 2
 
-grep -q '"ok": true' "$OUT/valid-validation.json"
-grep -q 'plan_demo_001' "$OUT/valid-summary.json"
+node -e '
+  const fs = require("node:fs");
+  const [validPath, summaryPath, unsafePath] = process.argv.slice(1);
+  const valid = JSON.parse(fs.readFileSync(validPath, "utf8"));
+  const summary = JSON.parse(fs.readFileSync(summaryPath, "utf8"));
+  const unsafe = JSON.parse(fs.readFileSync(unsafePath, "utf8"));
+  if (valid.ok !== true || !Array.isArray(valid.errors) || valid.errors.length !== 0) process.exit(1);
+  if (summary.id !== "plan_demo_001" || summary.ok !== true || summary.errorCount !== 0) process.exit(1);
+  if (unsafe.ok !== false || !unsafe.errors?.includes("requiresApproval must be true for action.risk public_publish")) process.exit(1);
+' "$OUT/valid-validation.json" "$OUT/valid-summary.json" "$OUT/unsafe-validation.json"
 grep -q 'plan_demo_001' "$OUT/valid-review.md"
-grep -q 'public_publish actions require approval' "$OUT/unsafe-validation.json"
 
 echo
 echo "CI summary gate artifacts written to $OUT"
