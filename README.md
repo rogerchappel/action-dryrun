@@ -29,9 +29,10 @@ action-dryrun --version
 The version command also accepts `-v` and `version`. Help and version commands
 take no positional arguments or additional options.
 
-Explicit actor names must contain a non-whitespace character. The CLI trims
-surrounding whitespace before writing the actor to the audit record; when
-`--actor` is omitted, the actor remains `agent`.
+Explicit actor names must contain a non-whitespace character and cannot begin
+with `-`, so an option token cannot be mistaken for a missing actor value. The
+CLI trims surrounding whitespace before writing the actor to the audit record;
+when `--actor` is omitted, the actor remains `agent`.
 
 Commands:
 
