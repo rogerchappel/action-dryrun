@@ -265,6 +265,9 @@ for (const [name, args, diagnostic] of [
   ['a missing actor value', ['audit','fixtures/valid-plan.json','--actor'], /--actor requires a non-empty name/],
   ['an empty actor value', ['audit','fixtures/valid-plan.json','--actor',''], /--actor requires a non-empty name/],
   ['a whitespace-only actor value', ['audit','fixtures/valid-plan.json','--actor',' \t '], /--actor requires a non-empty name/],
+  ['a version option as the actor value', ['audit','fixtures/valid-plan.json','--actor','--version'], /--actor requires a name, not an option: --version/],
+  ['a help option as the actor value', ['audit','fixtures/valid-plan.json','--actor','--help'], /--actor requires a name, not an option: --help/],
+  ['an unknown option as the actor value', ['audit','fixtures/valid-plan.json','--actor','--unknown'], /--actor requires a name, not an option: --unknown/],
 ]) {
   test(`cli rejects ${name} without emitting an audit record`, () => {
     const r = spawnSync('node', ['src/cli.js', ...args], {encoding:'utf8'});
