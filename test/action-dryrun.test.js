@@ -188,6 +188,14 @@ test('cli render prints review summary', () => {
   const out = execFileSync('node', ['src/cli.js','render','fixtures/valid-plan.json'], {encoding:'utf8'});
   assert.match(out, /Dry-run plan/);
 });
+test('PRD render example is executable with supported CLI syntax', () => {
+  const prd = fs.readFileSync('docs/PRD.md', 'utf8');
+  const command = prd.match(/^action-dryrun render .+$/m)?.[0];
+  assert.ok(command, 'docs/PRD.md must include a render example');
+  const [, , ...args] = command.split(/\s+/);
+  const out = execFileSync('node', ['src/cli.js', 'render', ...args], { encoding: 'utf8' });
+  assert.match(out, /Dry-run plan/);
+});
 test('cli render cannot emit user-controlled markdown structure', () => {
   const fixture = `.tmp-render-normalization-${process.pid}.json`;
   const plan = {
