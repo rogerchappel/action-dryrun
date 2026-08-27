@@ -42,8 +42,8 @@ Before an agent emails, posts, creates tickets, or updates CRM, the human should
 ## CLI/API Sketch
 
 ```bash
-action-dryrun validate plan.json
-action-dryrun render plan.json --format markdown
+action-dryrun validate fixtures/valid-plan.json
+action-dryrun render fixtures/valid-plan.json
 ```
 
 ## Verification
