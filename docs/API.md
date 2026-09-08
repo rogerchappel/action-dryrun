@@ -1,6 +1,12 @@
 # API
 
-action-dryrun exposes a small ESM library from `src/index.js` and a CLI from `src/cli.js`. The public surface is intentionally local-first so agents can call it in dry-run workflows without credentials.
+action-dryrun exposes a small ESM library from the `action-dryrun` package root and a CLI named `action-dryrun`. The public surface is intentionally local-first so agents can call it in dry-run workflows without credentials.
+
+```js
+import { RISK_LEVELS, renderMarkdown, validatePlan } from "action-dryrun";
+```
+
+The package manifest maps this root import to `src/index.js`; consumers should use the package name rather than importing internal source paths.
 
 ## Stability
 
