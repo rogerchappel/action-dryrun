@@ -51,6 +51,11 @@ try {
     process.exit(1);
   }
 
+  if (packageJson.exports?.["."] !== "./src/index.js") {
+    console.error("action-dryrun package smoke failed; expected the package root to export ./src/index.js.");
+    process.exit(1);
+  }
+
   const installDir = join(tempDir, "install");
   execFileSync("npm", ["install", "--prefix", installDir, join(tempDir, pack.filename)], {
     stdio: ["ignore", "ignore", "inherit"]
@@ -67,8 +72,25 @@ try {
     throw new Error(`installed CLI version ${version} did not match package ${packageJson.version}`);
   }
 
+  execFileSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "--eval",
+      `
+        import { RISK_LEVELS, renderMarkdown, validatePlan } from "action-dryrun";
+        if (typeof validatePlan !== "function") throw new Error("validatePlan export is unavailable");
+        if (typeof renderMarkdown !== "function") throw new Error("renderMarkdown export is unavailable");
+        if (!Array.isArray(RISK_LEVELS) || !RISK_LEVELS.includes("external_write")) {
+          throw new Error("RISK_LEVELS export is unavailable or invalid");
+        }
+      `
+    ],
+    { cwd: installDir, stdio: ["ignore", "ignore", "inherit"] }
+  );
+
   console.log(
-    `action-dryrun package smoke passed with ${pack.files.length} packed file(s) and installed CLI checks.`
+    `action-dryrun package smoke passed with ${pack.files.length} packed file(s), installed library import, and CLI checks.`
   );
 } finally {
   await rm(tempDir, { recursive: true, force: true });
